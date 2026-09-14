@@ -321,11 +321,9 @@ public class PluginIntegrationTests
     #region Plugin Command Execution Tests
 
     [TestMethod]
-    public void PluginCommand_HelpRequest_ShouldNotThrow()
+    public void PluginCommand_HelpRequest_ReturnsHelpRequested()
     {
-        // This test ensures that requesting help for any plugin command
-        // does not throw exceptions (even if plugins aren't fully configured)
-        
+        // Arrange
         if (_pluginCommands == null || _pluginCommands.Count == 0)
         {
             Assert.Inconclusive("No plugins discovered.");
@@ -333,14 +331,13 @@ public class PluginIntegrationTests
 
         foreach (var kvp in _pluginCommands)
         {
-            // Calling Main with just the command name should show help
-            // and return HelpRequested exit code (not crash)
-            int exitCode = CoseSignTool.Main(new[] { kvp.Key });
-            
-            // HelpRequested = 1, but other non-crash exit codes are acceptable
-            // The key is that it doesn't throw an exception
-            ((ExitCode)exitCode).Should().NotBe(ExitCode.UnknownError,
-                $"Plugin command '{kvp.Key}' help request should not return UnknownError.");
+            // Act
+            int exitCode = CoseSignTool.Main(new[] { kvp.Key, "--help" });
+
+            // Assert
+            ((ExitCode)exitCode).Should().Be(
+                ExitCode.HelpRequested,
+                $"Plugin command '{kvp.Key}' should return HelpRequested for --help.");
         }
     }
 

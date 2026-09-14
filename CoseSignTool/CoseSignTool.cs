@@ -47,7 +47,13 @@ public class CoseSignTool
         // Check if it's a plugin command first
         if (PluginCommands.TryGetValue(args[0].ToLowerInvariant(), out IPluginCommand? pluginCommand))
         {
-            return (int)RunPluginCommand(pluginCommand, args.Skip(1).ToArray());
+            string[] pluginArgs = args.Skip(1).ToArray();
+            if (pluginArgs.Length == 0 || IsNullOrHelp(pluginArgs[0]))
+            {
+                return (int)Usage(pluginCommand.Usage);
+            }
+
+            return (int)RunPluginCommand(pluginCommand, pluginArgs);
         }
 
         // Otherwise, try to parse as a built-in verb
