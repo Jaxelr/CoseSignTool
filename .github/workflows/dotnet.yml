@@ -19,6 +19,9 @@ on:
   release:
     types: [ created ]    # Trigger on new releases.
 
+env:
+  INTERNAL_NUGET_SOURCE: ${{ secrets.INTERNAL_NUGET_SOURCE }}
+
 jobs:
 
   #### PULL REQUEST EVENTS ####
